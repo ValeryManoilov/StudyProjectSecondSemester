@@ -1,0 +1,26 @@
+﻿[
+  {
+    "surname": "Doe",
+    "name": "John",
+    "patronymic": "Иванович",
+    "birth": {
+      "day": 6,
+      "month": 7,
+      "year": 2005
+    },
+    "phoneNumber": "+88005553535"
+  },
+
+  {
+    "surname": "Манойлов",
+    "name": "Валерий",
+    "patronymic": "Евгеньевич",
+    "birth": {
+      "day": 3,
+      "month": 7,
+      "year": 2007
+    },
+    "phoneNumber": "+88005553456"
+  }
+]
+
