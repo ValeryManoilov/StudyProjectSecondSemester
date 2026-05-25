@@ -26,21 +26,21 @@ public:
 
     void read();
 
-    void read(std::string filename, int personNum);
+    void read(const std::string& filename, int personNum);
 
-    void write();
+    void write() const;
 
-    bool check(std::string c_name,
-        std::string c_surname,
-        std::string c_patronymic,
-        std::string c_day,
-        std::string c_month,
-        std::string c_year,
-        std::string c_phoneNumber);
+    [[nodiscard]] bool check(const std::string& c_name,
+        const std::string& c_surname,
+        const std::string& c_patronymic,
+        const std::string& c_day,
+        const std::string& c_month,
+        const std::string& c_year,
+        const std::string& c_phoneNumber) const;
 
-    int compare(Person otherPerson);
+    int compare(const Person& otherPerson) const;
 
-    double dayBeforeBirthday();
+    [[nodiscard]] double dayBeforeBirthday() const;
 };
 
 #endif //FINALPROJECT_PERSON_H

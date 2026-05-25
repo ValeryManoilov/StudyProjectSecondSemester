@@ -17,40 +17,35 @@ Person::Person() {
 Person::Person(std::string p_name,
     std::string p_surname,
     std::string p_patronymic,
-    short p_day,
-    short p_month,
-    short p_year,
+    const short p_day,
+    const short p_month,
+    const short p_year,
     std::string p_phoneNumber)
 {
-    name = p_name;
-    surname = p_surname;
-    patronymic = p_patronymic;
+    name = std::move(p_name);
+    surname = std::move(p_surname);
+    patronymic = std::move(p_patronymic);
     day = p_day;
     month = p_month;
     year = p_year;
-    phoneNumber = p_phoneNumber;
+    phoneNumber = std::move(p_phoneNumber);
 }
 
 void Person::read() {
+    const std::time_t t = std::time(nullptr);
+    const std::tm* now = std::localtime(&t);
+    const auto now_year = now->tm_year + 1900;
+    const auto now_month = now->tm_mon + 1;
+    const auto now_day = now->tm_mday;
+
     std::cout << "Введите фамилию: ";
-    std::getline(std::cin, surname);
+    std::cin >> surname;
 
     std::cout << "Введите имя: ";
-    std::getline(std::cin, name);
+    std::cin >> name;
 
     std::cout << "Введите отчество: ";
-    std::getline(std::cin, patronymic);
-
-    do  {
-        std::cout << "Введите месяц рождения (число от 1 до 12): ";
-        std::cin >> month;
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(32767, '\n');
-            std::cout << "Ошибка! Введите число.\n";
-        }
-    }
-    while (month < 1 || month > 12);
+    std::cin >> patronymic;
 
     do  {
         std::cout << "Введите год рождения: ";
@@ -58,44 +53,48 @@ void Person::read() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(32767, '\n');
-            std::cout << "Ошибка! Введите число.\n";
+            std::cout << "Ошибка! Введите число от 1900 до " << now_year << std::endl;
         }
     }
-    while (year < 1900 || year > 2100);
+    while (year < 1900 || year > now_year);
+
+    do  {
+        std::cout << "Введите месяц рождения (число от 1 до 12): ";
+        std::cin >> month;
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(32767, '\n');
+            std::cout << "Ошибка! Введите число от 1 до 12";
+        }
+    }
+    while (month < 1 || month > 12 || (year == now_year && month > now_month));
 
     switch (month) {
-        case 1:
-        case 3:
-        case 5:
-        case 7:
-        case 8:
-        case 10:
-        case 12:
+
+        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
             do {
                 std::cout << "Введите день рождения (число от 1 до 31): ";
                 std::cin >> day;
                 if (std::cin.fail()) {
                     std::cin.clear();
                     std::cin.ignore(32767, '\n');
-                    std::cout << "Ошибка! Введите число.\n";
+                    std::cout << "Ошибка! Введите число от 1 до 31";
                 }
             }
-            while (day < 1 || day > 31);
+            while (day < 1 || day > 31 || (year == now_year && day > now_day));
             break;
-        case 4:
-        case 6:
-        case 9:
-        case 11:
+
+        case 4: case 6: case 9: case 11:
             do {
                 std::cout << "Введите день рождения (число от 1 до 30): ";
                 std::cin >> day;
                 if (std::cin.fail()) {
                     std::cin.clear();
                     std::cin.ignore(32767, '\n');
-                    std::cout << "Ошибка! Введите число.\n";
+                    std::cout << "Ошибка! Введите число от 1 до 30";
                 }
             }
-            while (day < 1 || day > 30);
+            while (day < 1 || day > 30 || (year == now_year && day > now_day));
             break;
         case 2:
             if (year % 4 == 0) {
@@ -105,10 +104,10 @@ void Person::read() {
                     if (std::cin.fail()) {
                         std::cin.clear();
                         std::cin.ignore(32767, '\n');
-                        std::cout << "Ошибка! Введите число.\n";
+                        std::cout << "Ошибка! Введите число от 1 до 29";
                     }
                 }
-                while (day < 1 || day > 29);
+                while (day < 1 || day > 29 || (year == now_year && day > now_day));
             }
             else {
                 do {
@@ -117,10 +116,10 @@ void Person::read() {
                     if (std::cin.fail()) {
                         std::cin.clear();
                         std::cin.ignore(32767, '\n');
-                        std::cout << "Ошибка! Введите число.\n";
+                        std::cout << "Ошибка! Введите число от 1 до 28";
                     }
                 }
-                while (day < 1 || day > 28);
+                while (day < 1 || day > 28 || (year == now_year && day > now_day));
             }
             break;
         default:
@@ -134,7 +133,8 @@ void Person::read() {
     while (phoneNumber.length() < 10 || phoneNumber.length() > 13);
 }
 
-void Person::read(std::string filename, int personNum) {
+void Person::read(const std::string& filename, const int personNum) {
+
     using json = nlohmann::json;
 
     std::ifstream file(filename);
@@ -157,14 +157,14 @@ void Person::read(std::string filename, int personNum) {
     file.close();
 }
 
-bool Person::check(std::string c_name,
-    std::string c_surname,
-    std::string c_patronymic,
-    std::string c_day,
-    std::string c_month,
-    std::string c_year,
-    std::string c_phoneNumber)
-{
+bool Person::check(const std::string& c_name,
+    const std::string& c_surname,
+    const std::string& c_patronymic,
+    const std::string& c_day,
+    const std::string& c_month,
+    const std::string& c_year,
+    const std::string& c_phoneNumber) const {
+
     if (c_name != "*" && c_name != name) {
         return false;
     }
@@ -189,15 +189,15 @@ bool Person::check(std::string c_name,
     return true;
 }
 
-double Person::dayBeforeBirthday() {
-    time_t now_time = time(0);
-    tm* timeinfo = localtime(&now_time);
-    tm birthday = *timeinfo;
+double Person::dayBeforeBirthday() const {
+    const time_t now_time = time(0);
+    const tm* timeInfo = localtime(&now_time);
+    tm birthday = *timeInfo;
 
     birthday.tm_mday = day;
     birthday.tm_mon = month - 1;
 
-    birthday.tm_year = timeinfo->tm_year;
+    birthday.tm_year = timeInfo->tm_year;
 
     time_t birthday_time = mktime(&birthday);
 
@@ -209,7 +209,7 @@ double Person::dayBeforeBirthday() {
     return difftime(birthday_time, now_time) / 86400.0;
 }
 
-void Person::write() {
+void Person::write() const {
     std::cout << "===Данные об объекте===" << std::endl;
     std::cout << "Имя: " << name << std::endl;
     std::cout << "Фамилия: " << surname << std::endl;
@@ -218,7 +218,7 @@ void Person::write() {
     std::cout << "Номер телефона: " << phoneNumber << std::endl;
 }
 
-int Person::compare(Person otherPerson) {
+int Person::compare(const Person& otherPerson) const {
     if (surname != otherPerson.surname) {
         return surname < otherPerson.surname ? -1 : 1;
     }
