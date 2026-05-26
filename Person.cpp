@@ -15,21 +15,49 @@ Person::Person() {
 };
 
 Person::Person(std::string p_name,
-    std::string p_surname,
-    std::string p_patronymic,
-    const short p_day,
-    const short p_month,
-    const short p_year,
-    std::string p_phoneNumber)
-{
-    name = std::move(p_name);
-    surname = std::move(p_surname);
-    patronymic = std::move(p_patronymic);
-    day = p_day;
-    month = p_month;
-    year = p_year;
-    phoneNumber = std::move(p_phoneNumber);
+     std::string p_surname,
+     std::string p_patronymic,
+     const short p_day,
+     const short p_month,
+     const short p_year,
+     std::string p_phoneNumber)
+    : name(std::move(p_name)),
+    surname(std::move(p_surname)),
+    patronymic(std::move(p_patronymic)),
+    day(p_day),
+    month(p_month),
+    year(p_year),
+    phoneNumber(std::move(p_phoneNumber))
+{}
+
+const std::string& Person::getName() const {
+    return name;
 }
+
+const std::string& Person::getSurname() const {
+    return surname;
+}
+
+const std::string& Person::getPatronymic() const {
+    return patronymic;
+}
+
+const std::string& Person::getPhoneNumber() const {
+    return phoneNumber;
+}
+
+short Person::getDay() const {
+    return day;
+}
+
+short Person::getMonth() const {
+    return month;
+}
+
+short Person::getYear() const {
+    return year;
+}
+
 
 void Person::read() {
     const std::time_t t = std::time(nullptr);
@@ -39,20 +67,20 @@ void Person::read() {
     const auto now_day = now->tm_mday;
 
     std::cout << "Введите фамилию: ";
-    std::cin >> surname;
+    std::getline(std::cin, surname);
 
     std::cout << "Введите имя: ";
-    std::cin >> name;
+    std::getline(std::cin, name);
 
     std::cout << "Введите отчество: ";
-    std::cin >> patronymic;
+    std::getline(std::cin, patronymic);
 
     do  {
         std::cout << "Введите год рождения: ";
         std::cin >> year;
         if (std::cin.fail()) {
             std::cin.clear();
-            std::cin.ignore(32767, '\n');
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Ошибка! Введите число от 1900 до " << now_year << std::endl;
         }
     }
@@ -77,7 +105,7 @@ void Person::read() {
                 std::cin >> day;
                 if (std::cin.fail()) {
                     std::cin.clear();
-                    std::cin.ignore(32767, '\n');
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cout << "Ошибка! Введите число от 1 до 31";
                 }
             }
@@ -90,7 +118,7 @@ void Person::read() {
                 std::cin >> day;
                 if (std::cin.fail()) {
                     std::cin.clear();
-                    std::cin.ignore(32767, '\n');
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cout << "Ошибка! Введите число от 1 до 30";
                 }
             }
@@ -242,4 +270,34 @@ int Person::compare(const Person& otherPerson) const {
         return day - otherPerson.day;
     }
     return 0;
+}
+
+bool Person::operator<(const Person& other) const {
+    return compare(other) < 0;
+}
+
+std::istream& operator>>(std::istream& is, Person& person) {
+    std::cout << "Введите фамилию: ";
+    std::getline(is, person.surname);
+
+    std::cout << "Введите имя: ";
+    std::getline(is, person.name);
+
+    std::cout << "Введите отчество: ";
+    std::getline(is, person.patronymic);
+
+    std::cout << "Введите год рождения: ";
+    is >> person.year;
+
+    std::cout << "Введите месяц рождения: ";
+    is >> person.month;
+
+    std::cout << "Введите день рождения: ";
+    is >> person.day;
+
+    std::cout << "Введите номер телефона: ";
+    is.ignore();
+    std::getline(is, person.phoneNumber);
+
+    return is;
 }

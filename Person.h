@@ -41,6 +41,19 @@ public:
     [[nodiscard]] int compare(const Person& otherPerson) const;
 
     [[nodiscard]] double dayBeforeBirthday() const;
+
+    const std::string& getName() const;
+    const std::string& getSurname() const;
+    const std::string& getPatronymic() const;
+    const std::string& getPhoneNumber() const;
+
+    short getDay() const;
+    short getMonth() const;
+    short getYear() const;
+
+    bool operator<(const Person& other) const;
+    friend std::ostream& operator<<(std::ostream& os, const Person& person);
+    friend std::istream& operator>>(std::istream& is, Person& person);
 };
 
 #endif //FINALPROJECT_PERSON_H

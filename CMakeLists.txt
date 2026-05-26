@@ -5,4 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(FinalProject main.cpp
         Person.h
-        Person.cpp)
+        Person.cpp
+        PhoneBook.cpp
+        PhoneBook.h
+        Node.h)
