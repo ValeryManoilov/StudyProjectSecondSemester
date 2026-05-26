@@ -38,7 +38,7 @@ public:
         const std::string& c_year,
         const std::string& c_phoneNumber) const;
 
-    int compare(const Person& otherPerson) const;
+    [[nodiscard]] int compare(const Person& otherPerson) const;
 
     [[nodiscard]] double dayBeforeBirthday() const;
 };

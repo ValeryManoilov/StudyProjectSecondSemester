@@ -146,6 +146,7 @@ void Person::read(const std::string& filename, const int personNum) {
 
     json j;
     file >> j;
+
     surname = j[personNum]["surname"];
     name = j[personNum]["name"];
     patronymic = j[personNum]["patronymic"];
